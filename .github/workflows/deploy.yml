@@ -5,34 +5,24 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
         with:
-          node-version: '18'
+          path: './dist'
 
-      - name: Install Dependencies
-        run: npm ci
-
-      - name: Update Vite Config
-        run: |
-          sed -i "s|base: '/sirjan-bhandari/'|base: '/'|" vite.config.js
-
-      - name: Build
-        run: npm run build
-
-      - name: Create CNAME File
-        run: echo "sirjanbhandari.com.np" > dist/CNAME
-
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4
-        with:
-          branch: gh-pages
-          folder: dist
-          clean: true
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
